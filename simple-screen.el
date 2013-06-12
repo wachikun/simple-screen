@@ -1,6 +1,6 @@
-;;; simple_screen.el -- Simple screen configuration manager
+;; simple_screen.el -- Simple screen configuration manager
 
-;; Copyright (C) 2012 Tadashi Watanabe <wac@umiushi.org>
+;; Copyright (C) 2012,2013 Tadashi Watanabe <wac@umiushi.org>
 
 ;; Author: Tadashi Watanabe <wac@umiushi.org>
 ;; Maintainer: Tadashi Watanabe <wac@umiushi.org>
