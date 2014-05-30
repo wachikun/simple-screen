@@ -1,4 +1,4 @@
-;; simple-screen.el -- Simple screen configuration manager
+;;; simple-screen.el --- Simple screen configuration manager
 ;; Filename: simple-screen.el
 ;; Description: Simple screen configuration manager.
 ;; URL: https://github.com/wachikun/simple-screen
