@@ -1,10 +1,12 @@
-;; simple_screen.el -- Simple screen configuration manager
-
-;; Copyright (C) 2012,2013 Tadashi Watanabe <wac@umiushi.org>
-
+;; simple-screen.el -- Simple screen configuration manager
+;; Filename: simple-screen.el
+;; Description: Simple screen configuration manager.
+;; URL: https://github.com/wachikun/simple-screen
 ;; Author: Tadashi Watanabe <wac@umiushi.org>
 ;; Maintainer: Tadashi Watanabe <wac@umiushi.org>
-;; Version: 
+;; Copyright (C) 2012,2013 Tadashi Watanabe <wac@umiushi.org>
+;; Created: :2013-2-17
+;; Version: 0.1.0
 ;; Keywords: tools
 
 ;; This program is free software; you can redistribute it and/or
