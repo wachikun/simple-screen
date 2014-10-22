@@ -25,6 +25,17 @@
 ;; MA 02111-1307 USA
 
 ;;; Commentary
+;; Very simple elscreen.el/screen-like window control program.
+;;   C-zw :screen list.
+;;   C-z0 :to screen 1.
+;;   C-z1 :to screen 2.
+;;      : 
+;;      : 
+;;   C-z9	:to screen 9.
+;; 
+;; Getting Started.
+;; (require simple-screen)
+;; 
 
 ;;; Code:
 
@@ -134,3 +145,4 @@
 
 ;; 
 (provide 'simple-screen)
+;;; simple-screen.el ends here
