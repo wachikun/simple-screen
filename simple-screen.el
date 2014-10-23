@@ -46,6 +46,8 @@
 (defvar simple-screen-current-index 0)
 (defvar simple-screen-mode-line "")
 
+(defvar simple-screen-map nil
+  "Prefix keymap for simple-screen commands.")
 (define-prefix-command 'simple-screen-map)
 (define-key simple-screen-map "w" 'simple-screen-show-screen)
 (define-key simple-screen-map "0" 'simple-screen-0)
