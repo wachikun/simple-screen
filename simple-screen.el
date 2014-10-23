@@ -35,6 +35,7 @@
 ;; 
 ;; Getting Started.
 ;; (require simple-screen)
+;; (global-set-key (kbd "C-z") 'simple-screen-map)
 ;; 
 
 ;;; Code:
@@ -46,7 +47,6 @@
 (defvar simple-screen-mode-line "")
 
 (define-prefix-command 'simple-screen-map)
-(global-set-key (kbd "C-z") 'simple-screen-map)
 (define-key simple-screen-map "w" 'simple-screen-show-screen)
 (define-key simple-screen-map "0" 'simple-screen-0)
 (define-key simple-screen-map "1" 'simple-screen-1)
