@@ -83,11 +83,19 @@
   (force-mode-line-update))
 
 (defun simple-screen-save-window-point (index)
-  (aset simple-screen-window-point-vector index (window-point (selected-window))))
+  (let ((point-hash (make-hash-table)))
+    (mapc #'(lambda (a)
+	      (puthash a (window-point a) point-hash))
+	  (window-list))
+    (aset simple-screen-window-point-vector index point-hash)))
 
 (defun simple-screen-load-window-point (index)
   (when (aref simple-screen-window-point-vector index)
-    (set-window-point (selected-window) (aref simple-screen-window-point-vector index))))
+    (let ((point-hash (aref simple-screen-window-point-vector index)))
+      (maphash #'(lambda (key value)
+		   (set-window-point key value)
+		   )
+	       point-hash))))
 
 (defun simple-screen-core (index)
   (when (not (= index simple-screen-current-index))
