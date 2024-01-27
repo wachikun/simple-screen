@@ -4,9 +4,9 @@
 ;; URL: https://github.com/wachikun/simple-screen
 ;; Author: Tadashi Watanabe <wac@umiushi.org>
 ;; Maintainer: Tadashi Watanabe <wac@umiushi.org>
-;; Copyright (C) 2012,2013 Tadashi Watanabe <wac@umiushi.org>
-;; Created: :2013-2-17
-;; Version: 0.1.0
+;; Copyright (C) 2012,2013,2024 Tadashi Watanabe <twacc2020@gmail.com>
+;; Created: :2024-1-20
+;; Version: 0.1.1
 ;; Keywords: tools
 
 ;; This program is free software; you can redistribute it and/or
@@ -40,14 +40,14 @@
 
 ;;; Code:
 
-(defvar simple-screen-vector (make-vector 10 (current-window-configuration)))
+(defvar simple-screen-vector (make-vector 10
+                                          (current-window-configuration)))
 (defvar simple-screen-buffer-name-vector (make-vector 10 ""))
 (defvar simple-screen-window-point-vector (make-vector 10 nil))
 (defvar simple-screen-current-index 0)
 (defvar simple-screen-mode-line "")
 
-(defvar simple-screen-map nil
-  "Prefix keymap for simple-screen commands.")
+(defvar simple-screen-map nil "Prefix keymap for simple-screen commands.")
 (define-prefix-command 'simple-screen-map)
 (define-key simple-screen-map "w" 'simple-screen-show-screen)
 (define-key simple-screen-map "0" 'simple-screen-0)
@@ -61,24 +61,43 @@
 (define-key simple-screen-map "8" 'simple-screen-8)
 (define-key simple-screen-map "9" 'simple-screen-9)
 
+(defun simple-screen-exist-mode-line-1 ()
+  (let (result)
+    (catch 'found
+      (mapc (lambda (a)
+              (when (and (listp a)
+                         (memq 'simple-screen-mode-line a))
+                (setq result t)
+                (throw 'found t)))
+            mode-line-format))
+    result))
+
+(defun simple-screen-exist-mode-line ()
+  (or (memq 'simple-screen-mode-line mode-line-format)
+      (simple-screen-exist-mode-line-1)))
+
 (defun simple-screen-update-mode-line (index)
   (mapc #'(lambda (buffer)
-  	    (when (not (eq ? (aref (buffer-name buffer) 0)))
-  	      (with-current-buffer buffer
-  		(when (and (get-buffer-window buffer)
-			   (listp mode-line-format)
-  			   (not (memq 'simple-screen-mode-line mode-line-format)))
-  		  ;; (message "set mode-line %s" (prin1-to-string buffer))
-  		  (setq mode-line-format (append mode-line-format (list 'simple-screen-mode-line)))))))
-  	(buffer-list))
+            (when (not (eq ? (aref (buffer-name buffer)
+                                   0)))
+              (with-current-buffer buffer
+                (when (and (get-buffer-window buffer)
+                           (listp mode-line-format)
+                           (not (simple-screen-exist-mode-line)))
+                  (setq mode-line-format (append mode-line-format
+                                                 (list 'simple-screen-mode-line)))))))
+        (buffer-list))
   (setq simple-screen-mode-line (format "[%d]" index)))
 
 (defun simple-screen-window-configuration-change-hook ()
   (simple-screen-update-mode-line simple-screen-current-index))
 
 (unless (featurep 'simple-screen)
-  (aset simple-screen-buffer-name-vector simple-screen-current-index (buffer-name))
-  (add-hook 'window-configuration-change-hook 'simple-screen-window-configuration-change-hook)
+  (aset simple-screen-buffer-name-vector
+        simple-screen-current-index
+        (buffer-name))
+  (add-hook 'window-configuration-change-hook
+            'simple-screen-window-configuration-change-hook)
   (simple-screen-update-mode-line simple-screen-current-index)
   (force-mode-line-update))
 
@@ -86,49 +105,62 @@
   (let ((point-hash (make-hash-table)))
     (mapc #'(lambda (key)
               (when (window-buffer key)
-	        (let ((point (window-point key))
-		      (point-max (with-current-buffer (window-buffer key) (point-max))))
-		  (puthash key `((point . ,point) (point-max . ,point-max)) point-hash))))
-	  (window-list))
-    (aset simple-screen-window-point-vector index point-hash)))
+                (let ((point (window-point key))
+                      (point-max (with-current-buffer (window-buffer key)
+                                   (point-max))))
+                  (puthash key
+                           `((point . ,point)
+                             (point-max . ,point-max))
+                           point-hash))))
+          (window-list))
+    (aset simple-screen-window-point-vector index
+          point-hash)))
 
 (defun simple-screen-load-window-point (index)
   (when (aref simple-screen-window-point-vector index)
     (let ((point-hash (aref simple-screen-window-point-vector index)))
       (maphash #'(lambda (key alist)
                    (when (window-buffer key)
-		     (let ((point-max (with-current-buffer (window-buffer key) (point-max)))
-			   (saved-point (cdr (assq 'point alist)))
-			   (saved-point-max (cdr (assq 'point-max alist))))
-		       (if (and (eq saved-point saved-point-max)
-			        (not (eq point-max saved-point-max)))
-			   (progn
-			     (set-window-point key point-max))
-		         (set-window-point key saved-point)))))
-	       point-hash))))
+                     (let ((point-max (with-current-buffer (window-buffer key)
+                                        (point-max)))
+                           (saved-point (cdr (assq 'point alist)))
+                           (saved-point-max (cdr (assq 'point-max alist))))
+                       (if (and (eq saved-point saved-point-max)
+                                (not (eq point-max saved-point-max)))
+                           (progn
+                             (set-window-point key point-max))
+                         (set-window-point key saved-point)))))
+               point-hash))))
 
 (defun simple-screen-core (index)
   (when (not (= index simple-screen-current-index))
-    (aset simple-screen-buffer-name-vector simple-screen-current-index (buffer-name))
+    (aset simple-screen-buffer-name-vector
+          simple-screen-current-index
+          (buffer-name))
     (let ((configuration (aref simple-screen-vector index)))
-      (aset simple-screen-vector simple-screen-current-index (current-window-configuration))
+      (aset simple-screen-vector
+            simple-screen-current-index
+            (current-window-configuration))
       (simple-screen-save-window-point simple-screen-current-index)
       (set-window-configuration (aref simple-screen-vector index))
       (simple-screen-load-window-point index)
       (simple-screen-update-mode-line index)
-      (aset simple-screen-buffer-name-vector index (buffer-name))))
+      (aset simple-screen-buffer-name-vector
+            index
+            (buffer-name))))
   (setq simple-screen-current-index index))
 
 (defun simple-screen-show-screen ()
   (interactive)
   (message (let ((index -1))
-	     (mapconcat #'(lambda (a)
-			    (setq index (1+ index))
-			    (if (= index simple-screen-current-index)
-				(format "%d:CURRENT " index)
-			      (when (> (length (aref simple-screen-buffer-name-vector index)) 0)
-				  (format "%d:%s " index a))))
-			simple-screen-buffer-name-vector ""))))
+             (mapconcat #'(lambda (a)
+                            (setq index (1+ index))
+                            (if (= index simple-screen-current-index)
+                                (format "%d:CURRENT " index)
+                              (when (> (length (aref simple-screen-buffer-name-vector index)) 0)
+                                (format "%d:%s " index a))))
+                        simple-screen-buffer-name-vector
+                        ""))))
 (defun simple-screen-clear-screen ()
   (interactive)
   (setq simple-screen-buffer-name-vector (make-vector 10 "")))
