@@ -43,12 +43,14 @@
 (defvar simple-screen-vector (make-vector 10
                                           (current-window-configuration)))
 (defvar simple-screen-buffer-name-vector (make-vector 10 ""))
+(defvar simple-screen-name-vector ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "10"])
 (defvar simple-screen-window-point-vector (make-vector 10 nil))
 (defvar simple-screen-current-index 0)
 (defvar simple-screen-mode-line "")
-
 (defvar simple-screen-map nil "Prefix keymap for simple-screen commands.")
+
 (define-prefix-command 'simple-screen-map)
+
 (define-key simple-screen-map "w" 'simple-screen-show-screen)
 (define-key simple-screen-map "0" 'simple-screen-0)
 (define-key simple-screen-map "1" 'simple-screen-1)
@@ -156,41 +158,55 @@
              (mapconcat #'(lambda (a)
                             (setq index (1+ index))
                             (if (= index simple-screen-current-index)
-                                (format "%d:CURRENT " index)
+                                (format "%s:CURRENT "
+                                        (elt simple-screen-name-vector index))
                               (when (> (length (aref simple-screen-buffer-name-vector index)) 0)
-                                (format "%d:%s " index a))))
+                                (format "%s:%s "
+                                        (elt simple-screen-name-vector index)
+                                        a))))
                         simple-screen-buffer-name-vector
                         ""))))
+
 (defun simple-screen-clear-screen ()
   (interactive)
   (setq simple-screen-buffer-name-vector (make-vector 10 "")))
+
 (defun simple-screen-0 ()
   (interactive)
   (simple-screen-core 0))
+
 (defun simple-screen-1 ()
   (interactive)
   (simple-screen-core 1))
+
 (defun simple-screen-2 ()
   (interactive)
   (simple-screen-core 2))
+
 (defun simple-screen-3 ()
   (interactive)
   (simple-screen-core 3))
+
 (defun simple-screen-4 ()
   (interactive)
   (simple-screen-core 4))
+
 (defun simple-screen-5 ()
   (interactive)
   (simple-screen-core 5))
+
 (defun simple-screen-6 ()
   (interactive)
   (simple-screen-core 6))
+
 (defun simple-screen-7 ()
   (interactive)
   (simple-screen-core 7))
+
 (defun simple-screen-8 ()
   (interactive)
   (simple-screen-core 8))
+
 (defun simple-screen-9 ()
   (interactive)
   (simple-screen-core 9))
