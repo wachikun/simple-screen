@@ -43,7 +43,7 @@
 (defvar simple-screen-vector (make-vector 10
                                           (current-window-configuration)))
 (defvar simple-screen-buffer-name-vector (make-vector 10 ""))
-(defvar simple-screen-name-vector ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "10"])
+(defvar simple-screen-name-vector ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
 (defvar simple-screen-window-point-vector (make-vector 10 nil))
 (defvar simple-screen-current-index 0)
 (defvar simple-screen-mode-line "")
@@ -89,7 +89,8 @@
                   (setq mode-line-format (append mode-line-format
                                                  (list 'simple-screen-mode-line)))))))
         (buffer-list))
-  (setq simple-screen-mode-line (format "[%d]" index)))
+  (setq simple-screen-mode-line (format "[%s]"
+                                        (elt simple-screen-name-vector index))))
 
 (defun simple-screen-window-configuration-change-hook ()
   (simple-screen-update-mode-line simple-screen-current-index))
