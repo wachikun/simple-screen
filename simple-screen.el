@@ -45,6 +45,8 @@
 (defvar simple-screen-buffer-name-vector (make-vector 10 ""))
 (defvar simple-screen-name-vector ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
 (defvar simple-screen-window-point-vector (make-vector 10 nil))
+(defvar simple-screen-display-buffer-name-p
+  t)
 (defvar simple-screen-current-index 0)
 (defvar simple-screen-mode-line "")
 (defvar simple-screen-map nil "Prefix keymap for simple-screen commands.")
@@ -162,9 +164,12 @@
                                 (format "%s:CURRENT "
                                         (elt simple-screen-name-vector index))
                               (when (> (length (aref simple-screen-buffer-name-vector index)) 0)
-                                (format "%s:%s "
-                                        (elt simple-screen-name-vector index)
-                                        a))))
+                                (if simple-screen-display-buffer-name-p
+                                    (format "%s:%s "
+                                            (elt simple-screen-name-vector index)
+                                            a)
+                                  (format "%s "
+                                          (elt simple-screen-name-vector index))))))
                         simple-screen-buffer-name-vector
                         ""))))
 
